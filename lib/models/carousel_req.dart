@@ -5,8 +5,8 @@ class CarouselReq {
   late String source;
   late String deviceId;
   CarouselReq({
-    this.type = '1', // 固定值1
-    this.source = '16', // 原生线下机固定为14
+    required this.type , // 固定值1
+    required this.source , // 原生线下机固定为14
     required this.deviceId, // 必须提供的设备ID
   });
 

@@ -3,6 +3,8 @@ import 'package:aicamera/models/carousel_req.dart';
 
 CarouselReq $CarouselReqFromJson(Map<String, dynamic> json) {
   final CarouselReq carouselReq = CarouselReq(
+    type: jsonConvert.convert<String>(json['type']) ?? '',
+    source: jsonConvert.convert<String>(json['source']) ?? '',
     deviceId: jsonConvert.convert<String>(json['deviceId']) ?? '',
   );
   final String? type = jsonConvert.convert<String>(json['type']);
