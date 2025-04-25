@@ -143,49 +143,27 @@ class BaseResponseEntity<T> {
   final T? data;
   final String? msg;
   BaseResponseEntity({this.code, this.data, this.msg});
-  // factory BaseResponseEntity.fromJson(
-  //     dynamic json,
-  //     T Function(dynamic) fromJsonFuture,
-  //     ) {
-  //
-  //   final jsonObject = json is String ? jsonDecode(json) : json;
-  //   // print('原始BaseResponseEntity.fromJson响应runtimeType: ${jsonObject}');
-  //   return BaseResponseEntity<T>(
-  //     code: jsonObject['code'] as num?,
-  //     data: jsonObject['data'] != null ? fromJsonFuture(jsonObject['data']) : null,
-  //     msg: jsonObject['msg'] as String?,
-  //   );
-  // }
 
-  // static Future<BaseResponseEntity<T>> fromJson<T>(
-  //     dynamic json, Future<T> Function(T) fromJsonFuture) async {
-  //   final jsonObject = json is String ? jsonDecode(json) : json;
-  //   final data = jsonObject['data'] != null ? await fromJsonFuture(jsonObject['data']) : null;
-  //   print('333333333333333333原始响应jsonObject["data"]: ${data}');
-  //   return BaseResponseEntity<T>(
-  //     code: jsonObject['code'] as num?,
-  //     data: data,
-  //     msg: jsonObject['msg'] as String?,
-  //   );
-  // }
-  factory BaseResponseEntity.fromJson(
-      dynamic json , T Function(dynamic) fromJsonT,
-      ) {
+  factory BaseResponseEntity.fromJson(dynamic json , T Function(dynamic) fromJsonT) {
     try {
       final dynamic decoded = json is String ? jsonDecode(json) : json;
       if (decoded == null) throw FormatException("Null response received");
       if (decoded is! Map<String, dynamic>) {
         throw FormatException("Expected Map<String, dynamic> but got ${decoded.runtimeType}");
       }
-      print('BaseResponseEntity原始响应runtimeType: ${decoded.runtimeType}');
-      print('BaseResponseEntity原始响应内容: $decoded');
-      return BaseResponseEntity<T>(
+      // print('BaseResponseEntity原始响应runtimeType: ${decoded.runtimeType}');
+      // print('BaseResponseEntity原始响应内容: $decoded');
+      // print(fromJsonT(decoded['data']));
+      // print('decoded["data"] type: ${decoded["data"]?.runtimeType}');
+      final entity = BaseResponseEntity<T>(
         code: decoded['code'] as num?,
-        data: decoded['data'] != null ? fromJsonT(decoded['data']) : null,
+        data: decoded['data'] != null ?  fromJsonT(decoded['data']) : null,
         msg: decoded['msg'] as String?,
       );
+      print('Parsed BaseResponseEntity: code=${entity.code}, data=${entity.data}, msg=${entity.msg}');
+      return entity;
     } catch (e) {
-      throw FormatException("Failed to parse BaseResponseEntity: $e");
+    throw FormatException("Failed to parse BaseResponseEntity11: $e");
     }
   }
 
@@ -193,7 +171,6 @@ class BaseResponseEntity<T> {
     try {
       print('原始响应runtimeType: ${jsonData.runtimeType}');
       print('原始响应内容: $jsonData');
-
       if (jsonData == null) {
         print("#@ data 字段为 null");
         return BaseResponseEntity<T>(

@@ -11,21 +11,19 @@ class AutoGenPhotoController extends GetxController {
   EasyRefreshController refreshController = EasyRefreshController();
   final AutoGenPhotoRepository _repository = AutoGenPhotoRepository().init();
   final RxList<PhotoEntity> photoData = <PhotoEntity>[].obs;
-  final logoEntity = Rxn<LogoEntity>();
   final isShow = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     fetchAutoGenPhotos();
+    fetchLogo();
   }
 
   fetchAutoGenPhotos() async {
     try {
       var req = CarouselReq(type: '', source : '22',deviceId: '8b0e817bac894619add7916c669f8138'); // Adjust parameters as needed
       final photos = await _repository.getAutoGenPhotos(req);
-      // print("####################################");
-      // print(photos);
       if (photos != null) {
         photoData.value = photos;
       }
@@ -36,18 +34,12 @@ class AutoGenPhotoController extends GetxController {
       refreshController.finishRefresh();
     }
   }
-  fetchLogo() async {
+
+  Future<LogoEntity?> fetchLogo() async {
     try {
       var req = CarouselReq(type: '', source : '18',deviceId: '4e7496c740384cbbb0f99ad3eaf938cb'); // Adjust parameters as needed
-      final photos = await _repository.getLogo(req);
-      // print("####################################");
-      // print(photos);
-      if (photos != null) {
-        logoEntity.value = photos;
-      }
-      refreshController.finishRefresh();
-      update();
-    } catch (e) {
+      return await _repository.getLogo(req);
+    }  catch (e) {
       LoadingUtil.toast("错误", "获取Logo图片失败", Theme.of(Get.context!).colorScheme.error);
       refreshController.finishRefresh();
     }

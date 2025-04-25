@@ -56,13 +56,11 @@ class AutoGenPhotoRepository extends GetxService {
         response.data is String ? response.data as dynamic : response.data as Map<String, dynamic>,
             (dynamic json) => LogoEntity.fromJson(json.cast<String, dynamic>())
       );
-
       // print('原始响应内容: ${response.data}');
       // final baseInfo = await BaseResponseEntity.fromJson(response.data, (json) async => LogoEntity.fromJson(json));
       // var baseInfo = BaseResponseEntity<LogoEntity>.fromJson(
       //   response.data, (json) async => LogoEntity.fromJson(json), // Provide the conversion function
       // );
-
       if (baseInfo.code == 0) {
         return baseInfo.data;
       } else {

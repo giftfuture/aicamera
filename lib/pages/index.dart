@@ -1,4 +1,3 @@
-import 'package:aicamera/generated/json/logo_entity.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:get/get.dart';
@@ -36,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _controller.fetchAutoGenPhotos(); // 初始化时加载数据
+    _controller.fetchLogo();
   }
 
   @override
@@ -110,12 +110,20 @@ class _MyHomePageState extends State<MyHomePage> {
                                     Container(
                                       padding: const EdgeInsets.symmetric(vertical: 16),
                                       color: const Color(0xFFE6D7FF),
-                                      child: const Center(
-                                        child: Text(
-                                          '-点击屏幕开拍-',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Color(0xFF8A62CC),
+                                      child: Center(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Get.toNamed('/takephoto');
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                            child: const Text(
+                                              '-点击屏幕开拍-',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Color(0xFF8A62CC),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -124,23 +132,46 @@ class _MyHomePageState extends State<MyHomePage> {
                                     // 第四行：第六张图片 (with logo overlay)
                                     Stack(
                                       children: [
-                                        _buildImageWidget(_controller.photoData[5], fourthRowImageWidth, fourthRowImageHeight),
-                                        FutureBuilder<LogoEntity>(
-                                          future: _controller.fetchLogo(), // Fetch logo asynchronously
+                                        // Reference image
+                                        _controller.photoData.length > 5
+                                            ? _buildImageWidget(_controller.photoData[5], fourthRowImageWidth, fourthRowImageHeight)
+                                            : const SizedBox(),
+                                        // Logo image overlay
+                                        FutureBuilder<LogoEntity?>(
+                                          future: _controller.fetchLogo(),
                                           builder: (context, snapshot) {
+                                            print('snapshot.data: ${snapshot.data}, type: ${snapshot.data?.runtimeType}');
                                             if (snapshot.connectionState == ConnectionState.waiting) {
-                                              return const Center(child: CircularProgressIndicator());
+                                              return const SizedBox();
                                             } else if (snapshot.hasError) {
-                                              return const Center(child: Text('Failed to load logo'));
-                                            } else if (snapshot.hasData) {
-                                              final logo = snapshot.data!;
-                                              return Image.network(
-                                                logo.logoUrl ?? 'https://example.com/default.png', // 为空时使用默认 URL✅ 非空
-                                                errorBuilder: (_, __, ___) => Icon(Icons.error), // 加载失败处理
+                                              print('Error: ${snapshot.error}');
+                                              return const Positioned(
+                                                top: 0,
+                                                left: 0,
+                                                child: Icon(Icons.error, size: 20),
                                               );
-
+                                            } else if (snapshot.hasData && snapshot.data != null) {
+                                              final logoEntity = snapshot.data!;
+                                              final logoUrl = logoEntity.logoUrl ?? 'https://example.com/default.png';
+                                              print("logoUrl=$logoUrl");
+                                              print('Reference image dimensions: $fourthRowImageWidth x $fourthRowImageHeight');
+                                              print('Logo image dimensions: ${fourthRowImageWidth / 3} x ${fourthRowImageHeight / 3}');
+                                              return Positioned(
+                                                top: -70,
+                                                left: 10,
+                                                // top: 0,
+                                                // left: 0,
+                                                child: Image.network(
+                                                  logoUrl,
+                                                  width: fourthRowImageWidth / 3,
+                                                  height: fourthRowImageHeight / 3,
+                                                  fit: BoxFit.contain,
+                                                  errorBuilder: (_, __, ___) => const Icon(Icons.error, size: 20),
+                                                ),
+                                              );
                                             } else {
-                                              return const SizedBox(); // In case there is no data
+                                              print('No data received from fetchLogo');
+                                              return const SizedBox();
                                             }
                                           },
                                         ),

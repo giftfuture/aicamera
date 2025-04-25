@@ -22,8 +22,6 @@ class LogoEntity {
   });
 
 
-
-
   // Creates an instance from a JSON map
   factory LogoEntity.fromJson(Map<String, dynamic> json) => $LogoEntityFromJson(json);
 
