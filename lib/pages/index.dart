@@ -1,3 +1,4 @@
+import 'package:aicamera/pages/takephoto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:get/get.dart';
@@ -113,7 +114,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                       child: Center(
                                         child: GestureDetector(
                                           onTap: () {
-                                            Get.toNamed('/takephoto');
+                                            // Get.toNamed('/takephoto');
+                                            // Navigate to the '/choosemodel' route
+                                            // Get.to(() => const TakePhotoPage());
+                                            Get.to(() => const TakePhotoPage());
                                           },
                                           child: Container(
                                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

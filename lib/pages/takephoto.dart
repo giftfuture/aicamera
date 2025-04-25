@@ -1,4 +1,6 @@
 import 'dart:async'; // Import the async library for Timer
+import 'package:aicamera/pages/autogenpic.dart';
+import 'package:aicamera/pages/choosemodel.dart';
 import 'package:flutter/material.dart';
 
 // Main application class
@@ -13,8 +15,7 @@ class TakePhotoPage extends StatelessWidget {
         colorSchemeSeed: Colors.purple, // Base color for the theme
         useMaterial3: true, // Enables Material 3 design features
       ),
-
-      // home: const MyHomePage(), // 'home' is replaced by 'initialRoute' and 'routes'
+       home: const MyHomePage(), // 'home' is replaced by 'initialRoute' and 'routes'
     );
   }
 }
@@ -32,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // Timer object for the countdown
   Timer? _timer;
   // State variable to hold the remaining seconds
-  int _remainingSeconds = 30;
+  int _remainingSeconds = 8;
 
   // Called when the widget is inserted into the widget tree
   @override
@@ -204,9 +205,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: [
                       // 'Next' button - Navigates to /choosemodel
                       ElevatedButton.icon(
-                        onPressed: () {
-                          // Navigate to the '/choosemodel' route
-                          Navigator.pushNamed(context, '/choosemodel');
+                      onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const AutoGenPicPage()),
+                          );
                         },
                         icon: const Icon(Icons.arrow_forward),
                         label: const Text('下一步'),
@@ -228,7 +231,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           // Check if mounted before calling setState
                           if(mounted) {
                             setState(() {
-                              _remainingSeconds = 30;
+                              _remainingSeconds = 8;
                             });
                           }
                           _startTimer();

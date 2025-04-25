@@ -61,6 +61,8 @@ initServices() async {
 class MyHomePage extends StatelessWidget {
   final String title;
   const MyHomePage({super.key, required this.title});
+
+  get routes => Routes.routes;
   
 
   @override

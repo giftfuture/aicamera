@@ -63,4 +63,6 @@ class PhotoEntity {
       tplConfigId.hashCode ^
       type.hashCode ^
       tplId.hashCode;
+
+  get title => null;
 }
