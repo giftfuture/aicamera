@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/index.dart';
 import 'choosemodel.dart';
+import 'chooseprint.dart';
 // Assuming AutoGenPhotoController and its data structure exist
 // import '../controller/index.dart';
 
@@ -152,30 +153,33 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           // --- Vertical "Go to Print" Button ---
+          // --- Vertical "Go to Print" Button ---
           GestureDetector(
             onTap: () {
-              // Add navigation logic for printing here
-              print("Go to Print Tapped!");
-              // Example: Get.toNamed('/print');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ChoosePrintPage()),
+              );
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0), // Padding inside the button container
-              margin: const EdgeInsets.only(right: 8.0), // Margin outside the button
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0), // 减少垂直padding
+              margin: const EdgeInsets.only(right: 8.0),
               decoration: BoxDecoration(
-                color: const Color(0xFFEA4335), // Red background color matching the old chip
-                borderRadius: BorderRadius.circular(20), // Rounded corners
+                color: const Color(0xFFEA4335),
+                borderRadius: BorderRadius.circular(20),
               ),
-              child: const Column( // Use Column for vertical arrangement
-                mainAxisAlignment: MainAxisAlignment.center, // Center text vertically
+              constraints: const BoxConstraints(maxHeight: 115), // 添加高度限制
+              child: const Column(
+                mainAxisSize: MainAxisSize.min, // 使用最小主轴尺寸
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Individual Text widgets for each character
                   Text('前', style: TextStyle(color: Colors.white, fontSize: 14)),
-                  SizedBox(height: 4), // Spacing between characters
+                  SizedBox(height: 4), // 减少间距
                   Text('往', style: TextStyle(color: Colors.white, fontSize: 14)),
                   SizedBox(height: 4),
                   Text('打', style: TextStyle(color: Colors.white, fontSize: 14)),
                   SizedBox(height: 4),
-                  Text('印', style: TextStyle(color: Colors.white, fontSize: 14)),
+                  Text('印', style: TextStyle(color: Colors.white, fontSize: 14))
                 ],
               ),
             ),

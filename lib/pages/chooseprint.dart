@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-
+import 'package:get/get.dart';
+import '../controller/index.dart';
 
 class ChoosePrintPage extends StatelessWidget {
   const ChoosePrintPage({super.key});
@@ -31,9 +31,11 @@ class _PhotoPrintScreenState extends State<PhotoPrintScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () {},
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black),
+          // Use Get.back() for navigation if using GetX routes
+          onPressed: () => Get.back(),
         ),
+        backgroundColor: const Color(0xFFF0F0F7),
         title: const Text(
           '请选择需要打印的照片',
           style: TextStyle(
