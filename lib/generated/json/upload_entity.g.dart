@@ -9,6 +9,8 @@
 
 // Import the base converter and the main entity model.
 // Adjust the paths based on your actual project structure.
+import 'dart:io';
+
 import 'package:aicamera/generated/json/base/json_convert_content.dart'; // Adjust path as needed
 import 'package:aicamera/models/upload_entity.dart'; // Adjust path as needed
 
@@ -16,9 +18,9 @@ import 'package:aicamera/models/upload_entity.dart'; // Adjust path as needed
 UploadEntity $UploadEntityFromJson(Map<String, dynamic> json) {
       final UploadEntity uploadEntity = UploadEntity();
       // Use jsonConvert for nullable String fields, matching photo_entity.g.dart pattern
-      final String? imgPath = jsonConvert.convert<String>(json['imgPath']); // Use correct JSON key 'imgPath' if needed, or 'img'
-      if (imgPath != null) {
-            uploadEntity.imgPath = imgPath;
+      final File? img =  null;//jsonConvert.convert<String>(json['img']); // Use correct JSON key 'imgPath' if needed, or 'img'
+      if (img != null) {
+            uploadEntity.img = img;
       }
       final String? deviceId = jsonConvert.convert<String>(json['deviceId']);
       if (deviceId != null) {
@@ -43,7 +45,7 @@ UploadEntity $UploadEntityFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> $UploadEntityToJson(UploadEntity entity) {
       final Map<String, dynamic> data = <String, dynamic>{};
       // Assign entity fields to the map keys
-      data['imgPath'] = entity.imgPath; // Use correct JSON key 'imgPath' if needed, or 'img'
+      data['img'] = entity.img; // Use correct JSON key 'imgPath' if needed, or 'img'
       data['deviceId'] = entity.deviceId;
       data['source'] = entity.source;
       data['userId'] = entity.userId;
@@ -54,14 +56,14 @@ Map<String, dynamic> $UploadEntityToJson(UploadEntity entity) {
 // The copyWith extension method should be in upload_entity.dart as per photo_entity pattern.
 // extension UploadEntityExtension on UploadEntity {
 //   UploadEntity copyWith({
-//     String? imgPath,
+//     String? img,
 //     String? deviceId,
 //     String? source,
 //     String? userId,
 //     String? type,
 //   }) {
 //     return UploadEntity()
-//       ..imgPath = imgPath ?? this.imgPath
+//       ..img = img ?? this.img
 //       ..deviceId = deviceId ?? this.deviceId
 //       ..source = source ?? this.source
 //       ..userId = userId ?? this.userId

@@ -1,10 +1,15 @@
 // Import the generated part file
 // Adjust the path if your generated files are in a different location
+
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
+
 import '../generated/json/upload_entity.g.dart';
 
 /// Represents the data entity for uploading.
 class UploadEntity {
-  String? imgPath; // Image file path (nullable)
+  File? img; // Image file path (nullable)
   String? deviceId; // Device ID (nullable)
   String? source;   // Channel source (nullable)
   String? userId;   // User ID (nullable)
@@ -12,7 +17,7 @@ class UploadEntity {
 
   // Constructor with named optional parameters for all fields
   UploadEntity({
-    this.imgPath,
+    this.img,
     this.deviceId,
     this.source,
     this.userId,
@@ -29,7 +34,7 @@ class UploadEntity {
   /// Creates a copy of the instance with optionally updated fields.
   /// Follows the pattern from photo_entity.dart.
   UploadEntity copyWith({
-    String? imgPath,
+    File? img,
     String? deviceId,
     String? source,
     String? userId,
@@ -40,7 +45,7 @@ class UploadEntity {
     // adjust accordingly or use property assignment like in photo_entity.g.dart's copyWith.
     // This version directly uses the constructor for simplicity as fields are nullable.
     return UploadEntity(
-      imgPath: imgPath ?? this.imgPath,
+      img: img ?? this.img,
       deviceId: deviceId ?? this.deviceId,
       source: source ?? this.source,
       userId: userId ?? this.userId,
@@ -50,7 +55,7 @@ class UploadEntity {
 
   @override
   String toString() {
-    return 'UploadEntity{imgPath: $imgPath, deviceId: $deviceId, source: $source, userId: $userId, type: $type}';
+    return 'UploadEntity{img: $img, deviceId: $deviceId, source: $source, userId: $userId, type: $type}';
   }
 
   // Optional: Add equality and hashCode for better object comparison if needed
@@ -59,7 +64,7 @@ class UploadEntity {
       identical(this, other) ||
           other is UploadEntity &&
               runtimeType == other.runtimeType &&
-              imgPath == other.imgPath &&
+              img == other.img &&
               deviceId == other.deviceId &&
               source == other.source &&
               userId == other.userId &&
@@ -67,7 +72,7 @@ class UploadEntity {
 
   @override
   int get hashCode =>
-      imgPath.hashCode ^
+      img.hashCode ^
       deviceId.hashCode ^
       source.hashCode ^
       userId.hashCode ^

@@ -17,7 +17,7 @@ class LoginRepository extends GetxService{
 
   Future<Map<String,dynamic>?> login(name,psd) async {
     try {
-      final response = await _httpService.post('/auth/login', data: {
+      final response = await _httpService.post('/offline/device/h5/reg', data: {
         "username": name,
         "password": psd,
         "slideVerificationToken": "cc7c3ea6565d438fb76c3f4736bc859a",
