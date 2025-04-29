@@ -1,5 +1,6 @@
 import 'dart:async'; // 导入 async 库以使用 Timer
 import 'dart:io'; // 导入 dart:io 以使用 File
+import 'dart:math' as math; // Import math for max calculation
 
 // --- 导入 UploadController 和 UploadEntity ---
 // Make sure these paths are correct for your project structure
@@ -9,6 +10,7 @@ import 'package:aicamera/models/upload_entity.dart'; // Data model for upload me
 // --- 结束导入 ---
 import 'package:aicamera/pages/autogenpic.dart'; // Page to navigate to after upload / 上传后导航到的页面
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // *** Import for SystemChrome / 导入用于 SystemChrome ***
 import 'package:camera/camera.dart'; // 导入 camera 包
 import 'package:get/get.dart'; // 导入 GetX 用于控制器管理
 
@@ -61,6 +63,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    // *** Lock orientation to portrait mode when entering the page ***
+    // *** 进入页面时将方向锁定为竖屏模式 ***
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     _startTimer(); // Start the countdown timer / 启动倒计时
     _initializeCamera(); // Initialize the camera / 初始化相机
   }
@@ -75,6 +83,10 @@ class _MyHomePageState extends State<MyHomePage> {
       print("Error disposing camera controller: $e"); // Log error during disposal / 记录处理过程中的错误
     });
     print("Camera controller disposal called.");
+
+    // *** Reset preferred orientations when leaving the page ***
+    // *** 离开页面时重置首选方向 ***
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
 
@@ -142,10 +154,15 @@ class _MyHomePageState extends State<MyHomePage> {
       // 首先分配给局部变量以确保原子性
       final newController = CameraController(
         _selectedCamera!,
-        ResolutionPreset.high, // Use high resolution / 使用高分辨率
+        // Use max resolution as requested previously
+        // 根据之前的请求使用最大分辨率
+        ResolutionPreset.max,
         enableAudio: false, // Disable audio recording / 禁用音频录制
+        // *** Explicitly set image format group if needed, usually defaults are fine ***
+        // *** 如果需要，明确设置图像格式组，通常默认值即可 ***
+        // imageFormatGroup: ImageFormatGroup.jpeg,
       );
-      print("CameraController created.");
+      print("CameraController created with ResolutionPreset.max.");
 
       // --- Initialize CameraController / 初始化 CameraController ---
       print("Initializing CameraController...");
@@ -168,6 +185,18 @@ class _MyHomePageState extends State<MyHomePage> {
       // 在设置状态之后（如果已挂载）等待初始化
       await initFuture;
       print("CameraController initialized successfully.");
+
+      // *** Optional: Lock camera orientation after initialization (if needed) ***
+      // *** 可选：初始化后锁定相机方向（如果需要）***
+      // Note: This might conflict with device rotation handling or might not be supported by all devices/cameras.
+      // 注意：这可能与设备旋转处理冲突，或者并非所有设备/相机都支持。
+      // try {
+      //   await _cameraController?.lockCaptureOrientation(DeviceOrientation.portraitUp);
+      //   print("Camera capture orientation locked to portraitUp.");
+      // } catch (e) {
+      //   print("Could not lock camera orientation: $e");
+      // }
+
 
     } on CameraException catch (e) {
       // Handle camera-specific exceptions
@@ -279,8 +308,8 @@ class _MyHomePageState extends State<MyHomePage> {
       // Populate with relevant metadata, excluding the image file itself
       // 填入相关元数据，不包括图像文件本身
       UploadEntity metadata = UploadEntity() // Create entity for metadata ONLY / 仅为元数据创建实体
-        ..deviceId = "c9000854d40b4221a5c0603026c59df8" // Example Device ID / 示例设备 ID
-        ..source = "16"     // Example Source ID / 示例来源 ID
+        ..deviceId = "3facfcaed38a4526a33818478889a279" // Example Device ID / 示例设备 ID
+        ..source = "22"     // Example Source ID / 示例来源 ID
       // ..userId = "YOUR_USER_ID", // Example User ID (if needed) / 示例用户 ID（如果需要）
         ..type = "1";        // Example Type ID / 示例类型 ID
       // NOTE: metadata.img is intentionally left null or unset here.
@@ -295,6 +324,26 @@ class _MyHomePageState extends State<MyHomePage> {
       // This step is necessary because the UploadRepository expects a dart:io File object.
       // 此步骤是必需的，因为 UploadRepository 期望一个 dart:io File 对象。
       final File imageFile = File(imageXFile.path);
+
+      // *** ADDED: Print image file information ***
+      // *** 新增：打印图片文件信息 ***
+      try {
+        if (await imageFile.exists()) {
+          final fileSize = await imageFile.length(); // Get file size asynchronously / 异步获取文件大小
+          final lastModified = await imageFile.lastModified(); // Get last modified time / 获取最后修改时间
+          print("--- Preparing to upload image ---");
+          print("  路径 (Path): ${imageFile.path}");
+          print("  大小 (Size): $fileSize bytes (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB)"); // Convert bytes to MB / 将字节转换为 MB
+          print("  最后修改时间 (Last Modified): $lastModified");
+          print("---------------------------------");
+        } else {
+          print("Error: Image file does not exist at path: ${imageFile.path}");
+        }
+      } catch (e) {
+        print("Error getting image file info: $e");
+      }
+      // *** End of added print statements ***
+
 
       // --- Call the uploadPhoto method from the controller ---
       // --- 调用控制器中的 uploadPhoto 方法 ---
@@ -400,14 +449,32 @@ class _MyHomePageState extends State<MyHomePage> {
           // Show camera preview if initialized successfully
           // 如果初始化成功，则显示相机预览
           else if (_cameraController != null && _cameraController!.value.isInitialized) {
-            // Ensure aspect ratio is handled correctly to avoid distortion
-            // 确保正确处理宽高比以避免失真
-            return Center( // Center the preview within its container / 将预览居中放置在其容器内
-              child: AspectRatio(
-                aspectRatio: _cameraController!.value.aspectRatio, // Use the camera's aspect ratio / 使用相机的宽高比
+            // *** MODIFIED: Use FittedBox to make preview fill the container ***
+            // *** 修改：使用 FittedBox 使预览填充容器 ***
+            return FittedBox(
+              fit: BoxFit.cover, // Scale and crop to fill / 缩放和裁剪以填充
+              child: SizedBox(
+                // Set the size based on the camera's aspect ratio to avoid distortion before BoxFit.cover crops it.
+                // 根据相机的宽高比设置尺寸，以避免在 BoxFit.cover 裁剪之前发生变形。
+                // Note: Camera aspect ratio might be landscape (e.g., 16:9), FittedBox handles covering the portrait container.
+                // 注意：相机宽高比可能是横向的（例如 16:9），FittedBox 会处理覆盖纵向容器。
+                width: _cameraController!.value.previewSize!.height, // Use height for width in portrait
+                height: _cameraController!.value.previewSize!.width, // Use width for height in portrait
                 child: CameraPreview(_cameraController!), // Display the preview / 显示预览
               ),
             );
+            /* // --- OLD CODE using AspectRatio ---
+            // --- 使用 AspectRatio 的旧代码 ---
+            return Center( // Center the preview within its container / 将预览居中放置在其容器内
+              child: AspectRatio(
+                // Use the camera's aspect ratio. Note that the physical sensor might be landscape,
+                // but the controller handles rotation for portrait preview.
+                // 使用相机的宽高比。请注意，物理传感器可能是横向的，但控制器会处理旋转以进行纵向预览。
+                aspectRatio: _cameraController!.value.aspectRatio,
+                child: CameraPreview(_cameraController!), // Display the preview / 显示预览
+              ),
+            );
+            */
           }
           // Fallback for unknown state
           // 未知状态的回退
@@ -450,6 +517,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     // Stack for layering the camera preview and overlay
                     // 用于分层相机预览和覆盖层的 Stack
                     SizedBox(
+                      // These dimensions already favor portrait (height > width)
+                      // 这些尺寸已经倾向于纵向（高 > 宽）
                       width: 300, // Adjust width as needed / 根据需要调整宽度
                       height: 450, // Adjust height as needed / 根据需要调整高度
                       child: Stack(
@@ -466,7 +535,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                               // Embed the cameraPreviewWidget defined above
                               // 嵌入上面定义的 cameraPreviewWidget
-                              child: cameraPreviewWidget,
+                              child: cameraPreviewWidget, // This now contains the FittedBox / 现在包含 FittedBox
                             ),
                           ),
 

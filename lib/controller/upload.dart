@@ -64,8 +64,9 @@ class UploadController extends GetxController {
       final UploadResultEntity? result = await _repository.uploadImage(img, uploadData);
 
       // Update the result state.
-      // 更新结果状态。
+      //更新结果状态。
       uploadResult.value = result;
+      print("result:");
       print(result);
       // Show success or failure message based on the result.
       // 根据结果显示成功或失败消息。
