@@ -1,3 +1,4 @@
+import 'package:aicamera/pages/subcategory.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:math'; // Import for Random
@@ -29,7 +30,7 @@ class AutoGenPicPage extends StatelessWidget {
 
   final String insUrl; // Input image URL
   final int? sex;    // Input gender (e.g., "0" or "1")
-
+  final String source = '14';
   const AutoGenPicPage({super.key, required this.insUrl, this.sex});
 
   @override
@@ -433,7 +434,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (_categoryController.menuList.isEmpty && !_categoryController.isMenuLoading.value) {
                     return const Center(child: Text("未找到分类", style: TextStyle(color: Colors.grey)));
                   }
-                  return GridView.builder( /* ... Actual Grid ... */
+                  return GridView.builder(
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2, mainAxisSpacing: 16, crossAxisSpacing: 16, childAspectRatio: 0.8,
                     ),
@@ -442,9 +443,31 @@ class _MyHomePageState extends State<MyHomePage> {
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       final category = _categoryController.menuList[index];
+                      // MODIFIED: Pass onTap callback to _buildGridItem
                       return _buildGridItem(
                         category.img ?? 'https://placehold.co/150x200/eee/ccc?text=No+Img',
-                        category.name ?? '加载中...',
+                        category.name ?? '加载中...', // Loading...
+                            () { // onTap callback function
+                          final String? categoryId = category.categorys;
+                          final String categoryName = category.name ?? '子分类'; // Subcategory
+
+                          if (categoryId != null && categoryId.isNotEmpty) {
+                            print("Navigating to SubCategoryPage for category ID: $categoryId, Name: $categoryName");
+                            // --- Navigation Logic ---
+                            // Ensure SubCategoryPage is imported at the top of autogenpic.dart
+                            // import 'path/to/subcategory.dart'; // Adjust the path
+                            Get.to(() => SubCategoryPage(
+                              source: '14',
+                              categorys: categoryId
+                            ));
+                            // --- End Navigation Logic ---
+                          } else {
+                            print("Error: Category ID is null or empty for ${category.name}");
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("无法导航：分类ID无效")) // Cannot navigate: Invalid category ID
+                            );
+                          }
+                        },
                       );
                     },
                   );
@@ -516,37 +539,59 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   // --- Helper Widgets (Grid Item, Shimmer) ---
-  Widget _buildGridItem(String imageUrl, String text) { /* ... Grid Item build logic ... */
-    return GestureDetector(
-      onTap: () => print("Grid item tapped: $text"),
+  Widget _buildGridItem(String imageUrl, String text, VoidCallback onTap) {
+    return GestureDetector( // Wrap with GestureDetector
+      onTap: onTap, // Use the passed onTap callback
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8.0),
-          boxShadow: [ BoxShadow(color: Colors.grey.withOpacity(0.15), spreadRadius: 1, blurRadius: 4, offset: const Offset(0, 1),) ],
+          boxShadow: [
+            BoxShadow(color: Colors.grey.withOpacity(0.15),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 1),)
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0)),
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(8.0),
+                    topRight: Radius.circular(8.0)),
                 child: Image.network(
                   imageUrl, fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) => (loadingProgress == null) ? child : Container(color: Colors.grey.shade200, child: Center(child: CircularProgressIndicator(strokeWidth: 2.0))),
-                  errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey.shade200, child: Center(child: Icon(Icons.image_not_supported_outlined, color: Colors.grey.shade400))),
+                  loadingBuilder: (context, child, loadingProgress) =>
+                  (loadingProgress == null)
+                      ? child
+                      : Container(color: Colors.grey.shade200,
+                      child: Center(
+                          child: CircularProgressIndicator(strokeWidth: 2.0))),
+                  errorBuilder: (context, error, stackTrace) =>
+                      Container(
+                          color: Colors.grey.shade200,
+                          child: Center(child: Icon(
+                              Icons.image_not_supported_outlined,
+                              color: Colors.grey.shade400))),
                 ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(text, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
+              child: Text(text, style: const TextStyle(
+                  fontWeight: FontWeight.w500, fontSize: 13),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis),
             ),
           ],
         ),
       ),
     );
   }
+
 
   Widget _buildGridItemShimmer() { /* ... Shimmer build logic ... */
     return Container(
