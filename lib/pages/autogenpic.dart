@@ -405,7 +405,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ]
                   ),
                   child: InkWell(
-                    onTap: () => Get.to(() => ChooseModelPage()),
+                   // onTap: () => Get.to(() => ChooseModelPage(selectedTemplate: null, parentCategoryId: '', source: '', subCategories: [],)),
                     borderRadius: BorderRadius.circular(24.0),
                     child: const Padding(
                       padding: EdgeInsets.symmetric(vertical: 6.0),

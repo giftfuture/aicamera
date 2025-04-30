@@ -10,6 +10,11 @@ import 'package:aicamera/models/template_entity.dart';
 import 'package:aicamera/models/template_result_entity.dart';
 import 'package:aicamera/models/category_sub_entity.dart'; // Added SubCategory Model
 import 'package:aicamera/models/category_sub_entity_result.dart'; // Added SubCategory Result Model
+
+// --- Import ChooseModelPage ---
+// Adjust path as needed
+import 'choosemodel.dart'; // Assuming choosemodel.dart defines ChooseModelPage
+
 // --- End of assumed imports ---
 
 // Placeholder for default image
@@ -121,14 +126,17 @@ class _SubCategoryPageState extends State<SubCategoryPage> {
         source: widget.source,
         categorys: categoryIdToFetch, // Use the passed ID
       );
+      // Ensure the controller clears previous templates before fetching new ones
+      // Note: Depending on your TemplateController implementation,
+      // you might need to explicitly clear the list or handle pagination state.
+      // Assuming fetchTemplates handles replacing/clearing the list.
       await _templateController.fetchTemplates(templateRequest);
 
       if (!mounted) return;
       setState(() {
         _isTemplateLoading = false;
         if (_templateController.templateList.isEmpty) {
-          // Don't show error message here, just indicate no templates found in the grid area
-          // _templateErrorMessage = "未找到模板";
+          // Indicate no templates found in the UI instead of setting error message
         }
       });
     } catch (e) {
@@ -142,12 +150,30 @@ class _SubCategoryPageState extends State<SubCategoryPage> {
   }
 
   // --- Handle Template Item Tap ---
+  // --- MODIFIED: Navigate to ChooseModelPage ---
   void _onTemplateTap(TemplateResultEntity template) {
     print("Tapped on template: ${template.title}, ID: ${template.tplId}");
-    // TODO: Implement navigation or action when a template is tapped
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("选择了模板: ${template.title}")) // "Selected template:"
-    );
+
+    // Ensure subcategories are loaded before navigating
+    if (_isSubCategoryLoading || _subCategoryErrorMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("子分类信息仍在加载或加载失败，请稍候")) // "Subcategory info still loading or failed, please wait"
+      );
+      return;
+    }
+
+    // Navigate to ChooseModelPage
+    Get.to(() => ChooseModelPage(
+      // Pass the selected template
+      selectedTemplate: template,
+      // Pass the parent category ID
+      parentCategoryId: widget.categorys,
+      // Pass the source
+      source: widget.source,
+      // Pass the list of subcategories
+      // Pass a copy to avoid modification issues if the controller updates the list
+      subCategories: _categorySubController.subCategoryList.toList(),
+    ));
   }
 
 
@@ -249,6 +275,7 @@ class _SubCategoryPageState extends State<SubCategoryPage> {
               return _buildGridItem(
                 imageUrl: template.img ?? _defaultPlaceholderImage,
                 text: template.title ?? '无标题模板', // "Untitled Template"
+                // Pass the onTap handler for templates
                 onTap: () => _onTemplateTap(template),
               );
             },
@@ -259,7 +286,7 @@ class _SubCategoryPageState extends State<SubCategoryPage> {
             children: [
               Icon(Icons.filter_vintage_rounded, size: 28, color: Colors.black54),
               SizedBox(width: 8),
-              Text('乐玩幻镜', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black54)),
+              Text('乐玩幻镜', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black54)), // Fun Mirror
             ],
           ),
           const SizedBox(height: 16),

@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 class Routes {
   static final routes = [
     GetPage(name: '/autogenpic', page: () => const AutoGenPicPage(insUrl: '',sex: 2,)),
-    GetPage(name: '/choosemodel', page: () => const ChooseModelPage()),
+    // GetPage(name: '/choosemodel', page: () => const ChooseModelPage(selectedTemplate: null, parentCategoryId: '', source: '', subCategories: [],)),
     GetPage(name: '/chooseprint', page: () => const ChoosePrintPage(templateId: '',generationId: 0)),
     GetPage(name: '/index', page: () => const IndexPage()),
     GetPage(name: '/lottery', page: () => const LotteryPage()),
