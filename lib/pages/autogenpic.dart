@@ -1,17 +1,18 @@
-
+import 'package:aicamera/controller/category.dart';
+import 'package:aicamera/controller/categorysub.dart';
+import 'package:aicamera/controller/template.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controller/index.dart';
 import 'choosemodel.dart';
 import 'chooseprint.dart';
-// Assuming AutoGenPhotoController and its data structure exist
-// import '../controller/index.dart';
 
 // Placeholder for the controller and data model for demonstration
 
 // 删除原有的 GetMaterialApp 包裹
 class AutoGenPicPage extends StatelessWidget {
-  const AutoGenPicPage({super.key});
+  final String insUrl;
+
+  const AutoGenPicPage({super.key, required this.insUrl});
   @override
   Widget build(BuildContext context) {
     // Ensure your root app widget is GetMaterialApp if using GetX navigation/state management extensively
@@ -34,7 +35,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final AutoGenPhotoController _controller = Get.put(AutoGenPhotoController());
+  final CategoryController  _controller = Get.put(CategoryController());
+  final CategorySubController _categorySubController = Get.put(CategorySubController());
+  final TemplateController _templateController = Get.put(TemplateController());
+
 
   @override
   Widget build(BuildContext context) {
@@ -121,13 +125,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       childAspectRatio: 0.8, // Aspect ratio of grid items
                       // shrinkWrap: true, // Removed shrinkWrap as it's inside an Expanded
                       // physics: const NeverScrollableScrollPhysics(), // Removed physics as it's inside an Expanded
-                      children: _controller.photoData.isNotEmpty
-                          ? _controller.photoData
-                          .map((photo) {
+                      children: _controller.menuList.isNotEmpty
+                          ? _controller.menuList
+                          .map((category) {
+                            print("_controller.menuList");
+                            print(_controller.menuList);
                         // Build each grid item
                         return _buildGridItem(
-                          photo.img ?? 'https://placehold.co/150x200?text=Error', // Image URL or placeholder
-                          photo.title ?? '加载中...', // Title or loading text
+                          category.img ?? 'https://placehold.co/150x200?text=Error', // Image URL or placeholder
+                          category.name ?? '加载中...', // Title or loading text
                           // chipText: '选择此风格' // Example chip text if needed later
                         );
                       }).toList()

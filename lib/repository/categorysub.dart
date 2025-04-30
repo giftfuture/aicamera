@@ -92,28 +92,29 @@ class CategorySubRepository extends GetxService {
       // 使用 BaseResponseList 解析响应 (假设 'data' 字段是一个列表)
       // Ensure BaseResponseList and CategorySubEntityResult.fromJson are correctly implemented
       // 确保 BaseResponseList 和 CategorySubEntityResult.fromJson 已正确实现
-      final baseInfo = BaseResponseList<CategorySubEntityResult>.fromJson(
-          responseDataJson,
-          // Provide the function to convert each item in the list
-          // 提供转换列表中每个项目的函数
-              (dynamic json) {
-            if (json is Map<String, dynamic>) {
-              try {
-                // Use the generated factory constructor for list items
-                // 对列表项使用生成的工厂构造函数
-                return CategorySubEntityResult.fromJson(json);
-              } catch (e) {
-                print("[CategorySubRepository] Error converting list item to CategorySubEntityResult: $e");
-                // Return a default/null object or throw, depending on desired handling
-                // 根据期望的处理方式返回默认/null对象或抛出异常
-                return CategorySubEntityResult(); // Example: return default object
-              }
-            } else {
-              print("[CategorySubRepository] Error: Expected list item to be a Map<String, dynamic>, but got ${json.runtimeType}");
-              return CategorySubEntityResult(); // Example: return default object
-            }
-          }
-      );
+      final baseInfo = BaseResponseList<CategorySubEntityResult>.fromJson(responseDataJson);
+      // final baseInfo = BaseResponseList<CategorySubEntityResult>.fromJson(
+      //     responseDataJson,
+      //     // Provide the function to convert each item in the list
+      //     // 提供转换列表中每个项目的函数
+      //         (dynamic json) {
+      //       if (json is Map<String, dynamic>) {
+      //         try {
+      //           // Use the generated factory constructor for list items
+      //           // 对列表项使用生成的工厂构造函数
+      //           return CategorySubEntityResult.fromJson(json);
+      //         } catch (e) {
+      //           print("[CategorySubRepository] Error converting list item to CategorySubEntityResult: $e");
+      //           // Return a default/null object or throw, depending on desired handling
+      //           // 根据期望的处理方式返回默认/null对象或抛出异常
+      //           return CategorySubEntityResult(); // Example: return default object
+      //         }
+      //       } else {
+      //         print("[CategorySubRepository] Error: Expected list item to be a Map<String, dynamic>, but got ${json.runtimeType}");
+      //         return CategorySubEntityResult(); // Example: return default object
+      //       }
+      //     }
+      // );
 
       // Handle result based on the response code
       // 根据响应代码处理结果

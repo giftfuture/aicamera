@@ -88,22 +88,23 @@ class TemplateRepository extends GetxService {
 
       // Parse the response using BaseResponseList
       // 使用 BaseResponseList 解析响应
-      final baseInfo = BaseResponseList<TemplateResultEntity>.fromJson(
-          responseDataJson,
-              (dynamic json) {
-            if (json is Map<String, dynamic>) {
-              try {
-                return TemplateResultEntity.fromJson(json);
-              } catch (e) {
-                print("[TemplateRepository] Error converting list item to TemplateResultEntity: $e");
-                return TemplateResultEntity(); // Example: return default object
-              }
-            } else {
-              print("[TemplateRepository] Error: Expected list item to be a Map<String, dynamic>, but got ${json.runtimeType}");
-              return TemplateResultEntity(); // Example: return default object
-            }
-          }
-      );
+      final baseInfo = BaseResponseList<TemplateResultEntity>.fromJson(responseDataJson);
+      // final baseInfo = BaseResponseList<TemplateResultEntity>.fromJson(
+      //     responseDataJson,
+      //         (dynamic json) {
+      //       if (json is Map<String, dynamic>) {
+      //         try {
+      //           return TemplateResultEntity.fromJson(json);
+      //         } catch (e) {
+      //           print("[TemplateRepository] Error converting list item to TemplateResultEntity: $e");
+      //           return TemplateResultEntity(); // Example: return default object
+      //         }
+      //       } else {
+      //         print("[TemplateRepository] Error: Expected list item to be a Map<String, dynamic>, but got ${json.runtimeType}");
+      //         return TemplateResultEntity(); // Example: return default object
+      //       }
+      //     }
+      // );
 
       // Handle result based on the response code
       // 根据响应代码处理结果
@@ -205,26 +206,27 @@ class TemplateRepository extends GetxService {
       // 使用 BaseResponseList 解析响应 (假设 'data' 字段是一个列表)
       // Ensure BaseResponseList and TemplateResultEntity.fromJson are correctly implemented
       // 确保 BaseResponseList 和 TemplateResultEntity.fromJson 已正确实现
-      final baseInfo = BaseResponseList<TemplateResultEntity>.fromJson(
-          responseDataJson,
-          // Provide the function to convert each item in the list
-          // 提供转换列表中每个项目的函数
-              (dynamic json) {
-            if (json is Map<String, dynamic>) {
-              try {
-                // Use the generated factory constructor for list items
-                // 对列表项使用生成的工厂构造函数
-                return TemplateResultEntity.fromJson(json);
-              } catch (e) {
-                print("[TemplateRepository] H5 Error converting list item to TemplateResultEntity: $e");
-                return TemplateResultEntity(); // Example: return default object
-              }
-            } else {
-              print("[TemplateRepository] H5 Error: Expected list item to be a Map<String, dynamic>, but got ${json.runtimeType}");
-              return TemplateResultEntity(); // Example: return default object
-            }
-          }
-      );
+      final baseInfo = BaseResponseList<TemplateResultEntity>.fromJson(responseDataJson);
+      // final baseInfo = BaseResponseList<TemplateResultEntity>.fromJson(
+      //     responseDataJson,
+      //     // Provide the function to convert each item in the list
+      //     // 提供转换列表中每个项目的函数
+      //         (dynamic json) {
+      //       if (json is Map<String, dynamic>) {
+      //         try {
+      //           // Use the generated factory constructor for list items
+      //           // 对列表项使用生成的工厂构造函数
+      //           return TemplateResultEntity.fromJson(json);
+      //         } catch (e) {
+      //           print("[TemplateRepository] H5 Error converting list item to TemplateResultEntity: $e");
+      //           return TemplateResultEntity(); // Example: return default object
+      //         }
+      //       } else {
+      //         print("[TemplateRepository] H5 Error: Expected list item to be a Map<String, dynamic>, but got ${json.runtimeType}");
+      //         return TemplateResultEntity(); // Example: return default object
+      //       }
+      //     }
+      // );
 
       // Handle result based on the response code
       // 根据响应代码处理结果

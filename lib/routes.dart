@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 
 class Routes {
   static final routes = [
-    GetPage(name: '/autogenpic', page: () => const AutoGenPicPage()),
+    GetPage(name: '/autogenpic', page: () => const AutoGenPicPage(insUrl: '',)),
     GetPage(name: '/choosemodel', page: () => const ChooseModelPage()),
     GetPage(name: '/chooseprint', page: () => const ChoosePrintPage()),
     GetPage(name: '/index', page: () => const IndexPage()),

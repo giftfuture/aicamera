@@ -37,57 +37,155 @@ class BaseResponseList<T> {
   // }
 
 
+  // BaseResponseList.fromJson(dynamic jsonString) {
+  //   // ============ 处理 code 字段 ============
+  //   // 1. 添加空值保护
+  //   Map<String, dynamic> jsonObject = json.decode(jsonString);
+  //   final dynamic codeValue = jsonObject['code'];
+  //   _code = _safeParseCode(codeValue);
+  //   print("#@BaseResponseList.fromJson Parsed code: $_code (原始值类型: ${codeValue.runtimeType})");
+  //   // ============ 处理 data 字段 ============
+  //   _data = [];
+  //   if (jsonObject['data'] != null) {
+  //     if(jsonObject['data'] is List) {
+  //       final List<dynamic> rawList = jsonObject['data'] as List<dynamic>;
+  //       _parseList(rawList);
+  //       for (var v in rawData) {
+  //         try {
+  //           // 2. 统一使用泛型转换方法
+  //           final T? bean = JsonConvert.fromJsonAsT<T>(v);
+  //           if (bean != null) {
+  //             _data!.add(bean);
+  //           } else {
+  //             print("#@ 数据项转换失败: ${v.runtimeType}");
+  //           }
+  //         } catch (e, stackTrace) {
+  //           print("#@ 数据项解析异常: $e");
+  //           print("#@ 堆栈跟踪: $stackTrace");
+  //         }
+  //       }
+  //     }// 新增处理单个实体对象的逻辑
+  //     else if (jsonObject['data'] is Map<String, dynamic>) {
+  //       try {
+  //         final T? bean = JsonConvert.fromJsonAsT<T>(jsonObject['data']);
+  //         if (bean != null) {
+  //           _data!.add(bean);
+  //         } else {
+  //           print("#@ 单对象转换失败: ${jsonObject['data'].runtimeType}");
+  //         }
+  //       } catch (e, stackTrace) {
+  //         print("#@ 单对象解析异常: $e");
+  //         print("#@ 堆栈跟踪: $stackTrace");
+  //       }
+  //     }
+  //    // 兼容其他意外类型
+  //     else if (jsonObject['data'] != null) {
+  //       print("#@ 未知数据类型: ${jsonObject['data'].runtimeType}");
+  //     }
+  //
+  //   } else {
+  //     print("#@ data 字段不存在或非列表类型");
+  //   }
+  //
+  //   // ============ 处理 msg 字段 ============
+  //   _msg = jsonObject['msg']?.toString() ?? '未知消息';
+  // }
+
   BaseResponseList.fromJson(dynamic jsonString) {
-    // ============ 处理 code 字段 ============
-    // 1. 添加空值保护
-    Map<String, dynamic> jsonObject = json.decode(jsonString);
-    final dynamic codeValue = jsonObject['code'];
-    _code = _safeParseCode(codeValue);
-    print("#@BaseResponseList.fromJson Parsed code: $_code (原始值类型: ${codeValue.runtimeType})");
-    // ============ 处理 data 字段 ============
-    _data = [];
-    if (jsonObject['data'] != null) {
-      if(jsonObject['data'] is List) {
-        final List<dynamic> rawData = jsonObject['data'] as List<dynamic>;
-        for (var v in rawData) {
-          try {
-            // 2. 统一使用泛型转换方法
-            final T? bean = JsonConvert.fromJsonAsT<T>(v);
-            if (bean != null) {
-              _data!.add(bean);
-            } else {
-              print("#@ 数据项转换失败: ${v.runtimeType}");
-            }
-          } catch (e, stackTrace) {
-            print("#@ 数据项解析异常: $e");
-            print("#@ 堆栈跟踪: $stackTrace");
-          }
-        }
-      }// 新增处理单个实体对象的逻辑
-      else if (jsonObject['data'] is Map<String, dynamic>) {
-        try {
-          final T? bean = JsonConvert.fromJsonAsT<T>(jsonObject['data']);
-          if (bean != null) {
-            _data!.add(bean);
-          } else {
-            print("#@ 单对象转换失败: ${jsonObject['data'].runtimeType}");
-          }
-        } catch (e, stackTrace) {
-          print("#@ 单对象解析异常: $e");
-          print("#@ 堆栈跟踪: $stackTrace");
-        }
-      }
-     // 兼容其他意外类型
-      else if (jsonObject['data'] != null) {
-        print("#@ 未知数据类型: ${jsonObject['data'].runtimeType}");
-      }
+    final jsonObject = _parseToMap(jsonString);
 
-    } else {
-      print("#@ data 字段不存在或非列表类型");
-    }
-
-    // ============ 处理 msg 字段 ============
+    // ============ 解析基础字段 ============
+    _code = _safeParseCode(jsonObject['code']);
     _msg = jsonObject['msg']?.toString() ?? '未知消息';
+
+    // ============ 多结构data解析 ============
+    _data = [];
+    final dynamic dataField = jsonObject['data'];
+
+    if (dataField != null) {
+      // 情况1：data是List类型
+      if (dataField is List) {
+        _processList(dataField);
+      }
+      // 情况2：data是Map类型
+      else if (dataField is Map<String, dynamic>) {
+        // 优先处理menuList字段
+        if (dataField['menuList'] is List) {
+          _processList(dataField['menuList']!);
+        }
+        // 处理categorys字段（示例）
+        else if (dataField['categorys'] is List) {
+          _processList(dataField['categorys']!);
+        }
+        // 其他Map结构处理
+        else {
+          _processMap(dataField);
+        }
+      }
+      // 情况3：其他类型
+      else {
+        print('[WARNING] 未知的data字段类型: ${dataField.runtimeType}');
+      }
+    }
+  }
+
+
+  static Map<String, dynamic> _parseToMap(dynamic jsonString) {
+    try {
+      if (jsonString is String) {
+        return json.decode(jsonString) as Map<String, dynamic>;
+      }
+      if (jsonString is Map<String, dynamic>) {
+        return jsonString;
+      }
+      throw FormatException('不支持的JSON格式');
+    } catch (e) {
+      print('[ERROR] JSON解析失败: $e');
+      return {};
+    }
+  }
+
+  // 处理List类型数据
+  void _processList(List<dynamic> list) {
+    for (var item in list) {
+      try {
+        final parsed = _parseItem(item);
+        if (parsed != null) _data!.add(parsed);
+      } catch (e, stack) {
+        print('[ERROR] 列表项解析失败: $e\n数据: $item\n堆栈: $stack');
+      }
+    }
+  }
+
+  // 处理Map类型数据
+  void _processMap(Map<String, dynamic> map) {
+    try {
+      // 尝试直接转换整个Map为对象
+      final parsed = _parseItem(map);
+      if (parsed != null) _data!.add(parsed);
+    } catch (e) {
+      print('[WARNING] Map结构转换失败: ${map.keys}');
+    }
+  }
+
+  // 通用项解析
+  T? _parseItem(dynamic item) {
+    try {
+      // 自动处理两种常见格式：
+      // 1. 项本身就是目标类型
+      if (item is T) return item;
+
+      // 2. 项是需要转换的Map
+      if (item is Map<String, dynamic>) {
+        return JsonConvert.fromJsonAsT<T>(item);
+      }
+
+      print('[WARNING] 非常规数据项类型: ${item.runtimeType}');
+      return null;
+    } catch (e) {
+      print('[ERROR] 数据项转换失败: ${T.toString()}');
+      return null;
+    }
   }
 
   // ============ 类型安全转换方法 ============

@@ -371,10 +371,23 @@ class _MyHomePageState extends State<MyHomePage> {
           print("Navigating to AutoGenPicPage...");
           // Use pushReplacement to prevent user from going back to the camera page
           // 使用 pushReplacement 防止用户返回相机页面
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const AutoGenPicPage()),
-          );
+          String? insUrl =_uploadController.uploadResult.value?.insUrl;
+          // Navigator.pushReplacement(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => const AutoGenPicPage(insUrl: state.pathParameters['insUrl']!,)),
+          // );
+          if (insUrl != null) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AutoGenPicPage(insUrl: insUrl!), // 注意去掉了 const
+              ),
+            );
+          } else {
+            // 处理 insUrl 为空的情况
+            print('insUrl is null');
+          }
+
           print("Navigator.pushReplacement called.");
         } else {
           print("Upload might have failed (based on controller state). Not navigating.");
