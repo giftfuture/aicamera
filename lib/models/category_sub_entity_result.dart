@@ -94,4 +94,5 @@ class CategorySubEntityResult {
       id.hashCode ^
       label.hashCode ^
       labelName.hashCode;
+
 }

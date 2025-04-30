@@ -1,7 +1,7 @@
 import 'dart:async'; // 导入 async 库以使用 Timer
 import 'dart:io'; // 导入 dart:io 以使用 File
 import 'dart:math' as math; // Import math for max calculation
-
+import '../controller/piccore.dart';
 // --- 导入 UploadController 和 UploadEntity ---
 // Make sure these paths are correct for your project structure
 // 确保这些路径对于您的项目结构是正确的
@@ -372,20 +372,21 @@ class _MyHomePageState extends State<MyHomePage> {
           // Use pushReplacement to prevent user from going back to the camera page
           // 使用 pushReplacement 防止用户返回相机页面
           String? insUrl =_uploadController.uploadResult.value?.insUrl;
+          int? sex = _uploadController.uploadResult.value?.sex;
           // Navigator.pushReplacement(
           //   context,
           //   MaterialPageRoute(builder: (context) => const AutoGenPicPage(insUrl: state.pathParameters['insUrl']!,)),
           // );
-          if (insUrl != null) {
+          if (insUrl != null && (sex == 0 || sex == 1)) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => AutoGenPicPage(insUrl: insUrl!), // 注意去掉了 const
+                builder: (context) => AutoGenPicPage(insUrl: insUrl, sex: sex), // 注意去掉了 const
               ),
             );
           } else {
             // 处理 insUrl 为空的情况
-            print('insUrl is null');
+            print('insUrl is null or sex is not 0 or 1');
           }
 
           print("Navigator.pushReplacement called.");

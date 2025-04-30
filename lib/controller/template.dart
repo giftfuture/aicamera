@@ -66,7 +66,7 @@ class TemplateController extends GetxController {
   /// Page and pageSize will be set internally.
   /// 接收包含请求参数的 [TemplateEntity] (source, categorys)。
   /// page 和 pageSize 将在内部设置。
-  Future<void> fetchInitialTemplates(TemplateEntity requestData) async {
+  Future<void> fetchTemplates(TemplateEntity requestData) async {
     // Prevent concurrent fetches
     // 防止并发获取
     if (isLoading.value) {
@@ -95,7 +95,7 @@ class TemplateController extends GetxController {
       // 调用 repository 方法获取数据
       // *** Ensure TemplateRepository has a method like getTemplateList ***
       // *** 确保 TemplateRepository 有类似 getTemplateList 的方法 ***
-      final List<TemplateResultEntity>? result = await _repository.getTemplateList(currentRequestData!);
+      final List<TemplateResultEntity>? result = await _repository.getH5MenuList(currentRequestData!);
 
       // Update the list state if data is fetched successfully
       // 如果数据获取成功，则更新列表状态

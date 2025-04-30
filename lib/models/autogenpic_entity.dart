@@ -23,7 +23,7 @@ class AutoGenPicEntity {
 
   /// Gender identifier (e.g., "0").
   /// 性别标识符 (例如 "0")。
-  String? sex;
+  int? sex;
 
   /// Source identifier.
   /// 来源标识符。
@@ -57,7 +57,7 @@ class AutoGenPicEntity {
   AutoGenPicEntity copyWith({
     String? img,
     String? tplid,
-    String? sex,
+    int? sex,
     String? source,
     String? deviceId,
   }) {

@@ -92,7 +92,7 @@ class CategoryRepository extends GetxService {
       // 使用 BaseResponseList 解析响应 (假设 'data' 字段是一个列表)
       // Ensure BaseResponseList and CategoryEntityResult.fromJson are correctly implemented
       // 确保 BaseResponseList 和 CategoryEntityResult.fromJson 已正确实现
-      final baseInfo = BaseResponseList<CategoryEntityResult>.fromJson(responseDataJson.menuList);
+       final baseInfo = BaseResponseList<CategoryEntityResult>.fromJson(responseDataJson);
       // final baseInfo = BaseResponseList<CategoryEntityResult>.fromJson(
       //     responseDataJson.menuList,
       //     // Provide the function to convert each item in the list
@@ -119,6 +119,7 @@ class CategoryRepository extends GetxService {
       // Handle result based on the response code
       // 根据响应代码处理结果
       if (baseInfo.code == 0) { // Assuming 0 means success / 假设 0 表示成功
+        print(baseInfo);
         print('[CategoryRepository] Menu list fetched successfully. Count: ${baseInfo.data?.length ?? 0}');
         return baseInfo.data; // Return the list of results / 返回结果列表
       } else {

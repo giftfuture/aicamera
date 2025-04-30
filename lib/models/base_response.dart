@@ -1,6 +1,9 @@
 import 'package:aicamera/generated/json/base/json_convert_content.dart';
 import 'package:aicamera/generated/json/logo_entity.g.dart';
+import 'package:aicamera/models/category_entity_result.dart';
+import 'package:aicamera/models/category_sub_entity_result.dart';
 import 'package:aicamera/models/photo_entity.dart';
+import 'package:aicamera/models/template_result_entity.dart';
 import 'dart:convert';
 
 import 'logo_entity.dart';
@@ -111,12 +114,17 @@ class BaseResponseList<T> {
       else if (dataField is Map<String, dynamic>) {
         // 优先处理menuList字段
         if (dataField['menuList'] is List) {
-          _processList(dataField['menuList']!);
+          _processmenuList(dataField['menuList']!);
         }
         // 处理categorys字段（示例）
         else if (dataField['categorys'] is List) {
-          _processList(dataField['categorys']!);
+          _processCategorySubList(dataField['categorys']!);
         }
+        // 处理categorys字段（示例）
+        else if (dataField['pageModel']["list"] is List) {
+          _processTemplateList(dataField['pageModel']["list"]!);
+        }
+
         // 其他Map结构处理
         else {
           _processMap(dataField);
@@ -156,8 +164,39 @@ class BaseResponseList<T> {
       }
     }
   }
-
-  // 处理Map类型数据
+  // 处理List类型数据
+  void _processmenuList(List<dynamic> list) {
+    for (var item in list) {
+      try {
+        final parsed =  CategoryEntityResult.fromJson(item);
+        if (parsed != null) _data!.add(parsed as T);
+      } catch (e, stack) {
+        print('[ERROR] 分类列表项解析失败: $e\n数据: $item\n堆栈: $stack');
+      }
+    }
+  }
+  // 处理List类型数据
+  void _processCategorySubList(List<dynamic> list) {
+    for (var item in list) {
+      try {
+        final parsed = CategorySubEntityResult.fromJson(item);
+        if (parsed != null) _data!.add(parsed as T);
+      } catch (e, stack) {
+        print('[ERROR] 子分类列表项解析失败: $e\n数据: $item\n堆栈: $stack');
+      }
+    }
+  }
+  // 处理模板List类型数据
+  void _processTemplateList(List<dynamic> list) {
+    for (var item in list) {
+      try {
+        final parsed = TemplateResultEntity.fromJson(item);
+        if (parsed != null) _data!.add(parsed as T);
+      } catch (e, stack) {
+        print('[ERROR] 模板列表项解析失败: $e\n数据: $item\n堆栈: $stack');
+      }
+    }
+  }  // 处理Map类型数据
   void _processMap(Map<String, dynamic> map) {
     try {
       // 尝试直接转换整个Map为对象
@@ -325,10 +364,6 @@ class BaseResponseEntity<T> {
 //       msg: msg,
 //     );
 //   }
-
-
-
-
 
   // BaseResponseEntity.fromJson(dynamic jsonString) {
   //   // ============ 处理 code 字段 ============

@@ -138,4 +138,6 @@ class TemplateResultEntity {
       title.hashCode ^
       tplId.hashCode ^
       moreTpl.hashCode;
+
+
 }

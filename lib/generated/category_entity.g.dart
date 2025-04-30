@@ -25,7 +25,7 @@ CategoryEntity $CategoryEntityFromJson(Map<String, dynamic> json) {
   if (versionType != null) {
     categoryEntity.versionType = versionType;
   }
-  final String? sex = jsonConvert.convert<String>(json['sex']);
+  final int? sex = jsonConvert.convert<int>(json['sex']);
   if (sex != null) {
     categoryEntity.sex = sex;
   }

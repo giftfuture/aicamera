@@ -152,7 +152,7 @@ class TemplateRepository extends GetxService {
   Future<List<TemplateResultEntity>?> getH5MenuList(TemplateEntity req) async {
     // Define the API endpoint for H5 menu templates
     // 定义 H5 菜单模板的 API 端点
-    const String h5MenuListEndpoint = '3/photoTpl/h5menuTplList'; // Use the provided URL / 使用提供的 URL
+    const String h5MenuListEndpoint = 'photoTpl/h5menuTplList'; // Use the provided URL / 使用提供的 URL
 
     try {
       // Log the request data being sent

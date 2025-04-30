@@ -3,7 +3,12 @@ import 'package:get/get.dart';
 import '../controller/index.dart';
 
 class ChoosePrintPage extends StatelessWidget {
-  const ChoosePrintPage({super.key});
+
+  final String templateId;
+  final int? generationId;
+
+
+  const ChoosePrintPage({super.key,required this.templateId, this.generationId});
 
   @override
   Widget build(BuildContext context) {

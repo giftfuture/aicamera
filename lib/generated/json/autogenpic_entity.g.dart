@@ -29,7 +29,7 @@ AutoGenPicEntity $AutoGenPicEntityFromJson(Map<String, dynamic> json) {
   if (tplid != null) {
     autoGenPicEntity.tplid = tplid;
   }
-  final String? sex = jsonConvert.convert<String>(json['sex']);
+  final int? sex = jsonConvert.convert<int>(json['sex']);
   if (sex != null) {
     autoGenPicEntity.sex = sex;
   }

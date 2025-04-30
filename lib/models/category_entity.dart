@@ -27,7 +27,7 @@ class CategoryEntity {
 
   /// Gender identifier. Example: "1"
   /// 性别标识符。示例: "1"
-  String? sex;
+  int? sex;
 
   /// Device identifier. Example: "2c79fd470c61f7e2"
   /// 设备标识符。示例: "2c79fd470c61f7e2"
@@ -58,7 +58,7 @@ class CategoryEntity {
     String? source,
     String? zone,
     String? versionType,
-    String? sex,
+    int? sex,
     String? deviceId,
   }) {
     return CategoryEntity(

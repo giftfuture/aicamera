@@ -32,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
         print("前往打印 tapped from ChooseModelPage!"); // Log for debugging
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ChoosePrintPage()), // Navigates to ChoosePrintPage
+          MaterialPageRoute(builder: (context) => const ChoosePrintPage(templateId: '',generationId: 1,)), // Navigates to ChoosePrintPage
         );
         // Or using GetX:
         // Get.to(() => const ChoosePrintPage());
