@@ -38,7 +38,6 @@ class SubCategoryPage extends StatefulWidget {
 class _SubCategoryPageState extends State<SubCategoryPage> {
   // --- Controllers ---
   final TemplateController _templateController = Get.find<TemplateController>();
-  final PicCoreController _coreController = Get.find<PicCoreController>();
   // Added CategorySubController
   final CategorySubController _categorySubController = Get.put(CategorySubController()); // Use put or find depending on lifecycle
 
